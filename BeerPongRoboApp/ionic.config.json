@@ -1,0 +1,7 @@
+{
+  "name": "BeerPongRoboApp",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

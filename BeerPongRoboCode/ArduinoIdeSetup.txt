@@ -1,0 +1,5 @@
+Setup for Wmos D1 Mini
+
+Add http://arduino.esp8266.com/stable/package_esp8266com_index.json to Additional BoardLoader list
+
+In Boardmanager serach for node and install the Board esp8266

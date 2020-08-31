@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Robot</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-list>
+  <ion-card *ngFor="let robot of robots">
+    <ion-card-header>
+      <ion-card-subtitle>{{robot.ip}}</ion-card-subtitle>
+      <ion-card-title>Robot</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      ip:string;
+      red:number;
+      green:number;
+      blue:number;
+      mode:number;
+      power:boolean;
+      ledMode:number;
+      trackwhite:number;
+      <ion-item>
+        <ion-label>
+          Ip
+        </ion-label>
+        <ion-input>
+
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Power
+        </ion-label>
+        <ion-toggle>
+          
+        </ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Mode
+        </ion-label>
+        <ion-select>
+          <ion-select-option>
+            Random
+          </ion-select-option>
+          <ion-select-option>
+            Line Follow
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Led Mode
+        </ion-label>
+        <ion-select>
+          <ion-select-option>
+            Random
+          </ion-select-option>
+          <ion-select-option>
+            Party
+          </ion-select-option>
+          <ion-select-option>
+            Fade
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Track
+        </ion-label>
+        <ion-select>
+          <ion-select-option>
+            White
+          </ion-select-option>
+          <ion-select-option>
+            Black
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+
+  </ion-card>
+</ion-list>
+</ion-content>
