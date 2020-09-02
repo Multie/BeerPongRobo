@@ -4,10 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { RobotPageRoutingModule } from './robot-routing.module';
+import { AllRobotsPageRoutingModule } from './all-robots-routing.module';
 
-import { RobotPage } from './robot.page';
-import { BrowserModule } from '@angular/platform-browser';
+import { AllRobotsPage } from './all-robots.page';
 import { RoboInfoComponent } from '../robo-info/robo-info.component';
 
 @NgModule({
@@ -15,8 +14,8 @@ import { RoboInfoComponent } from '../robo-info/robo-info.component';
     CommonModule,
     FormsModule,
     IonicModule,
-    RobotPageRoutingModule
+    AllRobotsPageRoutingModule
   ],
-  declarations: [RobotPage,RoboInfoComponent]
+  declarations: [AllRobotsPage,RoboInfoComponent]
 })
-export class RobotPageModule {}
+export class AllRobotsPageModule {}

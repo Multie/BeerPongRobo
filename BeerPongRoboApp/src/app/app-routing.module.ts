@@ -4,17 +4,22 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'folder/Inbox',
+    redirectTo: 'robots',
     pathMatch: 'full'
   },
   {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
+    path: 'robots',
+    loadChildren: () => import('./robot/robot.module').then( m => m.RobotPageModule)
   },
   {
-    path: 'robot',
-    loadChildren: () => import('./robot/robot.module').then( m => m.RobotPageModule)
+    path: 'all-robots',
+    loadChildren: () => import('./all-robots/all-robots.module').then( m => m.AllRobotsPageModule)
+  },  {
+    path: 'settings',
+    loadChildren: () => import('./settings/settings.module').then( m => m.SettingsPageModule)
   }
+
+
 ];
 
 @NgModule({

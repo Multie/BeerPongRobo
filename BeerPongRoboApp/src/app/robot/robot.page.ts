@@ -10,7 +10,6 @@ export class RobotPage implements OnInit {
 
   constructor(private robotService:RobotService) { 
     this.robots = this.robotService.robots;
-    console.log(this.robots);
   }
 
   robots:Array<MyRobot>;

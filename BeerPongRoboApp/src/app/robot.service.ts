@@ -20,7 +20,7 @@ export class RobotService {
         this.http.get('http://192.168.'+ a +'.1/',{responseType:'text'}).subscribe( (res)=> {
           this.gateway = '192.168.'+ a + ".";
           resolve('192.168.'+ a + ".");
-          console.log("test");
+         
         
         } , (error)=>{
         });
@@ -48,6 +48,17 @@ export class RobotService {
     });
   }
 
+  sendRobotData(robot:MyRobot) {
+    this.http.post("http://" + robot.ip + "/power",robot.power).subscribe((value)=> {
+    },(error)=> {});
+    this.http.post("http://" + robot.ip + "/mode",robot.mode).subscribe((value)=> {
+    },(error)=> {});
+    this.http.post("http://" + robot.ip + "/LedMode",robot.ledMode).subscribe((value)=> {
+    },(error)=> {});
+    this.http.post("http://" + robot.ip + "/trackwhite",robot.trackwhite).subscribe((value)=> {
+    },(error)=> {});
+  }
+
 }
 
 
@@ -62,5 +73,12 @@ export class MyRobot {
   trackwhite:number;
   constructor(ip:string) {
     this.ip = ip;
+    this.red = 0;
+    this.green = 0;
+    this.blue = 0;
+    this.mode = 0;
+    this.power = false;
+    this.ledMode = 0;
+    this.trackwhite = 0;
   }
 }

@@ -1,0 +1,93 @@
+<ion-card>
+    <ion-card-header>
+        <ion-card-subtitle>
+            {{robot.ip}}
+        </ion-card-subtitle>
+        <ion-card-title>
+            Robot
+        </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+        <ion-item>
+            <ion-icon slot="start" name="wifi"></ion-icon>
+            <ion-label>
+                Ip
+            </ion-label>
+            <ion-input type="text" [readonly]="readonlyIp" [(ngModel)]="robot.ip">
+
+            </ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-icon slot="start" name="flash"></ion-icon>
+            <ion-label>
+                Power
+            </ion-label>
+            <ion-toggle [(ngModel)]="robot.power">
+
+            </ion-toggle>
+        </ion-item>
+        <ion-item>
+            <ion-icon slot="start" name="ellipsis-horizontal"></ion-icon>
+            <ion-label>
+                Mode
+            </ion-label>
+            <ion-select [(ngModel)]="robot.mode" [compareWith]="compareFn">
+                <ion-select-option value="0">
+                    No Move
+                </ion-select-option>
+                <ion-select-option value="1">
+                    Random
+                </ion-select-option>
+                <ion-select-option value="2">
+                    Line Follow
+                </ion-select-option>
+                <ion-select-option value="3">
+                    Border Follow
+                </ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-icon slot="start" name="flashlight"></ion-icon>
+            <ion-label>
+                Led Mode
+            </ion-label>
+            <ion-select [(ngModel)]="robot.ledMode" [compareWith]="compareFn">
+                <ion-select-option value="0">
+                    Off
+                </ion-select-option>
+                <ion-select-option value="1">
+                    Random
+                </ion-select-option>
+                <ion-select-option value="2">
+                    Party
+                </ion-select-option>
+                <ion-select-option value="3">
+                    Fade
+                </ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-icon slot="start" name="push-outline"></ion-icon>
+            <ion-label>
+                Track
+            </ion-label>
+            <ion-select [(ngModel)]="robot.trackwhite" [compareWith]="compareFn">
+                <ion-select-option value="0">
+                    White
+                </ion-select-option>
+                <ion-select-option value="1">
+                    Black
+                </ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item button (click)="send()">
+            <ion-icon slot="start" name="paper-plane"></ion-icon>
+            <ion-label>
+                Send
+            </ion-label>
+
+        </ion-item>
+    </ion-card-content>
+</ion-card>
