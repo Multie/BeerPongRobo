@@ -4,18 +4,22 @@ volatile bool SensorStateFR = false;
 volatile bool SensorStateFL = false;
 volatile bool SensorStateBR = false;
 volatile bool SensorStateBL = false;
-
+volatile bool TrackWhite = true;
 void ICACHE_RAM_ATTR IntSensorFR() {
-  SensorStateFR = digitalRead(IRSensorPinFR);
+  SensorStateFR = (digitalRead(IRSensorPinFR) == TrackWhite);
+  MotorEvent();
 }
 void ICACHE_RAM_ATTR IntSensorFL() {
-  SensorStateFL = digitalRead(IRSensorPinFL);
+  SensorStateFL = digitalRead(IRSensorPinFL) == TrackWhite;
+  MotorEvent();
 }
 void ICACHE_RAM_ATTR IntSensorBR() {
-  SensorStateBR = digitalRead(IRSensorPinBR);
+  SensorStateBR = digitalRead(IRSensorPinBR) == TrackWhite;
+  MotorEvent();
 }
 void ICACHE_RAM_ATTR IntSensorBL() {
-  SensorStateBL = digitalRead(IRSensorPinBL);
+  SensorStateBL = digitalRead(IRSensorPinBL) == TrackWhite;
+  MotorEvent();
 }
 
 void SensorSetup() {

@@ -1,6 +1,8 @@
 
-#define NUM_LEDS    25
+#define NUM_LEDS    1
 CRGB leds[NUM_LEDS];
+
+int LedMode = 0;
 
 void SetColor(int r, int g, int b) {
    // Serial.print("ClearColor");
