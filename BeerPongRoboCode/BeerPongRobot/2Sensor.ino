@@ -6,20 +6,31 @@ volatile bool SensorStateBR = false;
 volatile bool SensorStateBL = false;
 volatile bool TrackWhite = true;
 void ICACHE_RAM_ATTR IntSensorFR() {
-  SensorStateFR = (digitalRead(IRSensorPinFR) == TrackWhite);
-  MotorEvent();
+  if (digitalRead(IRSensorPinFR) == TrackWhite) {
+    SensorStateFR = true;
+  }
 }
 void ICACHE_RAM_ATTR IntSensorFL() {
-  SensorStateFL = digitalRead(IRSensorPinFL) == TrackWhite;
-  MotorEvent();
+   if (digitalRead(IRSensorPinFL) == TrackWhite) {
+    SensorStateFL = true;
+   }
 }
 void ICACHE_RAM_ATTR IntSensorBR() {
-  SensorStateBR = digitalRead(IRSensorPinBR) == TrackWhite;
-  MotorEvent();
+  if (digitalRead(IRSensorPinBR) == TrackWhite) {
+    SensorStateBR = true;
+   }
 }
 void ICACHE_RAM_ATTR IntSensorBL() {
-  SensorStateBL = digitalRead(IRSensorPinBL) == TrackWhite;
-  MotorEvent();
+  if (digitalRead(IRSensorPinBL) == TrackWhite) {
+    SensorStateBL = true;
+   }
+}
+
+void ClearSensor() {
+  SensorStateFR = false;
+  SensorStateFL = false;
+  SensorStateBR = false;
+  SensorStateBL = false;
 }
 
 void SensorSetup() {
@@ -32,13 +43,21 @@ void SensorSetup() {
   attachInterrupt(digitalPinToInterrupt(IRSensorPinFR), IntSensorFR, CHANGE);
   attachInterrupt(digitalPinToInterrupt(IRSensorPinFL), IntSensorFL, CHANGE);
   attachInterrupt(digitalPinToInterrupt(IRSensorPinBR), IntSensorBR, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(IRSensorPinBL), IntSensorBL, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(3), IntSensorBL, CHANGE);
   Serial.println("SensorSetup End");
 }
 
+
 void SensorLoop() {
+  #ifdef SENSORDEBUG
   Debug("SensorFR",String(SensorStateFR));
   Debug("SensorFL",String(SensorStateFL));
   Debug("SensorBR",String(SensorStateBR));
   Debug("SensorBL",String(SensorStateBL));
+
+  Debug("SensorFRPin",String(digitalRead(IRSensorPinFR)));
+  Debug("SensorFLPin",String(digitalRead(IRSensorPinFL)));
+  Debug("SensorBRPin",String(digitalRead(IRSensorPinBR)));
+  Debug("SensorBLPin",String(digitalRead(IRSensorPinBL)));
+  #endif
 }

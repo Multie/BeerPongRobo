@@ -1,119 +1,98 @@
 
-#define MovementSpeed 0.222; //mm/ms
 
-#define Mode1ForwardBackward 100
-#define Mode1Rotate 10
+#define MotorSpeed 111 // mm/s = n * u = n * 2*pi*r = 212/60 [1/s] * 2*pi*5mm 
+#define WheelbaseRadius 33.2 //mm = messuard in Fusion
+double MotorStep = 0.1; //s Timesteps for the MotorPulses
 
-long long MotorRTime = 0;
-long long MotorLTime = 0;
-bool MotorROn = false;
-bool MotorLOn = false;
-bool MotorRDirection = false;
-bool MotorLDirection = false;
-int MotorMovement = 0; // 0 = Off, 1=forward 2=backward 3=turnRight 4=turnLeft
+int MotorMode = 1;
+double RobotSpeed = 10; // mm/s
+double Mode1Forward = 20; // mm
+double Mode2Rotate = 0; // degree
 
-void MoveForward(double distance) { // mm
-  bool dir = distance >= 0;
-  MotorMovement = 1;
-  if (distance < 0) {
-    distance = distance * (-1);
-    MotorMovement = 2;
+double Mode6Forward = 100;
+double Mode6Rotate = 10;
+bool RobotMove(double speed, double distance) {
+  bool forward = distance >= 0;
+long long endtime = 0;
+  double time = distance / speed; // Total time R
+  double timesteps = time / MotorStep; // Steps of Timesteps
+  double OnTime = speed / MotorSpeed * MotorStep * 1000; // ms
+  double OffTime = (1-speed / MotorSpeed) * MotorStep * 1000; //ms
+  Debug("time",String(time));
+  Debug("timesteps",String(timesteps));
+   Debug("OnTime",String(OnTime));
+    Debug("OffTime",String(OffTime));
+  for (int a = 0; a < timesteps; a++) {
+    endtime = millis() + OnTime;
+    while (millis() < endtime) {
+      //Debug("Wait",String((forward && (SensorStateFR || SensorStateFL)) || (!forward && (SensorStateBR || SensorStateBL))));
+      if ((forward && (SensorStateFR || SensorStateFL)) || (!forward && (SensorStateBR || SensorStateBL))) {
+        // Sees Obstacle => Break
+        MotorStop(true, true);
+        //ClearSensor();
+        return false;
+      }
+      else {
+        MotorMove(forward, forward);
+      }
+      Unblock();
+    }
+    MotorStop(true, true);
+    endtime = millis() + OffTime;
+    while (millis() < endtime) {
+      Unblock();
+    }
   }
-  double duration = distance / MovementSpeed;
-  MotorMove(dir, duration, dir, duration);
+
 }
 
-void MoveRotate(double degree) { // mm
-  bool dir = degree >= 0;
-  MotorMovement = 3;
-  if (degree < 0) {
-    degree = degree * (-1);
-    MotorMovement = 4;
+bool RobotRotate(double speed, double degree) {
+  double roationDistance = degree / 720 * WheelbaseRadius; // mm Per Wheel
+  bool rightway = roationDistance >= 0;
+  long long endtime = 0;
+  double time = roationDistance / speed; // Total time R
+  double timesteps = time / MotorStep; // Steps of Timesteps
+  double OnTime = speed / MotorSpeed * MotorStep * 1000;
+  double OffTime = (1-speed / MotorSpeed) * MotorStep * 1000;
+  for (int a = 0; a < timesteps; a++) {
+    MotorMove(!rightway, rightway);
+    endtime = millis() + OnTime;
+    while (millis() < endtime) {
+      if ((rightway && (SensorStateBR || SensorStateFL) || !rightway && (SensorStateFR || SensorStateBL))) {
+        // Sees Obstacle => Break
+        MotorStop(true, true);
+        ClearSensor();
+        return false;
+      }
+      else {
+         MotorMove(!rightway, rightway);
+      }
+      Unblock();
+    }
+    MotorStop(true, true);
+    endtime = millis() + OffTime;
+    while (millis() < endtime) {
+      Unblock();
+    }
   }
-  double drivelength = degree * 0.62831; // mm per wheel
-  double duration = drivelength / MovementSpeed;
-  MotorMove(dir, duration, !dir, duration);
 }
 
-void MotorMove(bool dirR, double msR, bool dirL, double msL) {
-  digitalWrite(MotorPinLDir, dirL);
+void MotorMove(bool dirR, bool dirL) { // true = forward
   digitalWrite(MotorPinRDir, dirR);
-  digitalWrite(MotorPinLSpeed, 1);
-  digitalWrite(MotorPinRSpeed, 1);
-  long long start = millis();
-  MotorRTime = start + msR;
-  MotorLTime = start + msL;
-  MotorROn = true;
-  MotorLOn = true;
+  digitalWrite(MotorPinRSpeed, !dirR);
+
+  digitalWrite(MotorPinLDir, !dirL);
+  digitalWrite(MotorPinLSpeed, dirL);
 }
 
 void MotorStop(bool r, bool l) {
   if (r) {
-    MotorRTime = 0;
     digitalWrite(MotorPinRDir, 0);
     digitalWrite(MotorPinRSpeed, 0);
   }
-  MotorRTime = 0;
-  MotorLTime = 0;
-  digitalWrite(MotorPinLDir, 0);
-  digitalWrite(MotorPinLSpeed, 0);
-
-  MotorROn = false;
-  MotorLOn = false;
-}
-
-void MotorEvent() {
-  if (MotorMode == 1) {
-    switch (MotorMovement) {
-      case 1: // Forward
-        if (SensorStateFR) {
-          // Turn Left
-          MotorStop(true, true);
-          MoveRotate(Mode1Rotate*-1);
-        }
-        else if (SensorStateFL) {
-          // Turn Right
-          MotorStop(true, true);
-           MoveRotate(Mode1Rotate);
-        }
-        break;
-      case 2: // backward
-        if (SensorStateBR) {
-          // Turn Right
-          MotorStop(true, true);
-          MoveRotate(Mode1Rotate);
-        }
-        else if (SensorStateBL) {
-          // Turn Left
-          MotorStop(true, true);
-          MoveRotate(Mode1Rotate*-1);
-        }
-        break;
-      case 3: // Turn Right
-        if (SensorStateFR) {
-          // Go Back
-          MotorStop(true, true);
-          MoveForward(Mode1ForwardBackward*-1);
-        }
-        else if (SensorStateBL) {
-          // Go Front
-          MotorStop(true, true);
-          MoveForward(Mode1ForwardBackward);
-        }
-        break;
-      case 4: // Turn Left
-        if (SensorStateFL) {
-          // Go Back
-          MotorStop(true, true);
-          MoveForward(Mode1ForwardBackward*-1);
-        }
-        else if (SensorStateBR) {
-          // Go Front
-          MotorStop(true, true);
-          MoveForward(Mode1ForwardBackward);
-        }
-        break;
-    }
+  if (l) {
+    digitalWrite(MotorPinLDir, 0);
+    digitalWrite(MotorPinLSpeed, 0);
   }
 }
 
@@ -125,18 +104,50 @@ void MotorSetup() {
 }
 
 void MotorLoop() {
-  if (millis() > MotorRTime && MotorROn) {
-    MotorROn = false;
-    // Turn Off R
-    MotorStop(true, false);
-  }
-  if (millis() > MotorLTime && MotorLOn) {
-    MotorLOn = false;
-    // Turn Off L
-    MotorStop(false, true);
-  }
-  if (!MotorROn && !MotorLOn) { // NomalDrive never enters
-    // Finished Booth Actions
-    MotorMovement = 0;
+  Debug("Motor Mode",String(MotorMode));
+  switch (MotorMode) {
+    case 0:
+      MotorStop(true, true);
+      MotorMode = -1;
+      break;
+    case 1: // Manuel Forward
+      if (!RobotMove(RobotSpeed, Mode1Forward)) {
+        MotorMode = 0;
+      }
+      break;
+    case 2: // Manuel Rotate
+      if (!RobotRotate(RobotSpeed, Mode2Rotate)) {
+        MotorMode = 0;
+      }
+      break;
+    case 3: // Random Drive
+      if (!RobotMove(RobotSpeed, 1000)) {
+        RobotRotate(RobotSpeed, random(1) * 360 - 180); // Rotate any
+      }
+      break;
+    case 4: // Edge Follow
+      if (!RobotMove(RobotSpeed, 1000)) {
+        if (SensorStateFR) {
+          RobotRotate(RobotSpeed, -5);
+        }
+        else if (SensorStateFL) {
+          RobotRotate(RobotSpeed, 5);
+        }
+      }
+      break;
+    case 5: // Edge Follow
+      if (!RobotMove(RobotSpeed, 1000)) {
+        if (SensorStateFR) {
+          RobotRotate(RobotSpeed, -5);
+        }
+        else if (SensorStateFL) {
+          RobotRotate(RobotSpeed, 5);
+        }
+      }
+      break;
+    case 6: // Random Circle
+      RobotMove(RobotSpeed, Mode6Forward);
+      RobotRotate(RobotSpeed, Mode6Rotate);
+      break;
   }
 }

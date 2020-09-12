@@ -86,7 +86,7 @@ bool ConnectWifi() {
   Serial.print("Connecting to Wifi ");
   WiFi.mode(WIFI_AP_STA);
   WiFi.begin(ssid, password);
-  int timeout = 20;
+  int timeout = 5;
   while (WiFi.status() != WL_CONNECTED && timeout > 0) {
     timeout--;
     SetColor(255, 0, 0);
@@ -104,7 +104,9 @@ bool ConnectWifi() {
     Serial.print("IP:");
     Ip = WiFi.localIP();
     Serial.println(Ip);
-
+   SetColor(0, 255, 0);
+   delay(1000);
+    return true;
   }
 }
 
@@ -117,10 +119,18 @@ bool StartACPWifi() {
     Serial.print("IP:");
     Ip = WiFi.softAPIP();
     Serial.println(Ip);
+    SetColor(0, 0, 255);
+    delay(1000);
     return true;
   }
   else {
     Serial.println("Not Srarted Acsess Point");
+    while (true) {
+      SetColor(0, 0, 255);
+      delay(50);
+      SetColor(255, 0, 0);
+      delay(100);
+    }
     return false;
   }
 }
@@ -151,13 +161,16 @@ void WlanSetup() {
 
   String completehost = "http://" + String(hostname) + ".local";
 
-
+ #ifdef WIFIDEBUG
   Serial.println("Server Start");
   server.begin();
   Serial.println("URL: http://" + hostname + ".local/");
+  #endif
 }
 
 void WlanLoop() {
   server.handleClient();
-  Serial.printf("Anzahl der Verbundenen Geräte= %d\n", WiFi.softAPgetStationNum());
+  #ifdef WIFIDEBUG
+    Debug("AnzahlderVerbundenen",String(WiFi.softAPgetStationNum()));
+  #endif
 }
