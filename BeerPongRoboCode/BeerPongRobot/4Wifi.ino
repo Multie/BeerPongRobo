@@ -1,10 +1,10 @@
 const char* ssid = "BeerPongRobo";
 const char* password = "robopong";
 
-String website = "<h1>hi</h1>";
+
 IPAddress Ip;
 ESP8266WebServer server(80);
-
+bool WifiIsHost=false;
 String ipToString(IPAddress ip) {
   String s = "";
   for (int i = 0; i < 4; i++)
@@ -27,61 +27,107 @@ void handleNotFound() {
   server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(404, "text/plain", message);
 }
+/*
+Getter/Setter
+Sensor:
+  TrackWhite
+Motor:
+  MotorMode
+  MotorStep
+  RobotSpeed
+  Mode1Forward
+  Mode2Rotate
+Led:
+  LedMode
+  LedR
+  LedG
+  LedB
+Wifi:
+  WifiIp(Robot)
+  WifiIsHost
+*/
 
-
-
-void handleGETRoot() { //multiRGB.local/  "http://multiStarwars.local"
-  // Manual Setup
-  // Mode Select
+// GET //////////////
+void handleGETRoot() {
   server.sendHeader("Access-Control-Allow-Origin", "*");
-  String json = "{\"ip\": \"" + ipToString(Ip) + "\",\"mode\":" + String(MotorMode) + ",\"power\":" + String(Power) + ",\"ledMode\":" + String(LedMode) + ",\"trackwhite\":" + String(TrackWhite) + "}";
+  String json = "{\"ip\": \"ipVal\",\"TrackWhite\": \"TrackWhiteVal\",\"MotorMode\": \"MotorModeVal\",\"MotorStep\": \"MotorStepVal\",\"RobotSpeed\": \"RobotSpeedVal\",\"Mode1Forward\": \"Mode1ForwardVal\",\"Mode2Rotate\": \"Mode2RotateVal\",\"LedMode\": \"LedModeVal\",\"LedR\": \"LedRVal\",\"LedG\": \"LedGVal\",\"LedB\": \"LedBVal\",\"WifiIsHost\": \"WifiIsHostVal\"}";
+  json.replace("TrackWhiteVal",String(TrackWhite));
+  json.replace("MotorModeVal",String(MotorMode));
+  json.replace("MotorStepVal",String(MotorStep));
+  json.replace("RobotSpeedVal",String(RobotSpeed));
+  json.replace("Mode1ForwardVal",String(Mode1Forward));
+  json.replace("Mode2RotateVal",String(Mode2Rotate));
+  json.replace("LedModeVal",String(LedMode));
+  json.replace("LedRVal",String(LedR));
+  json.replace("LedGVal",String(LedG));
+  json.replace("LedBVal",String(LedB));
+  json.replace("WifiIsHostVal",String(WifiIsHost));
+  json.replace("ipVal",String(ipToString(Ip)));
   server.send(200, "text/plain", json);
 }
-
-void handleGETRobot() { //multiRGB.local/  "http://multiStarwars.local"
+void handleGETRobot() {
   // Manual Setup
   // Mode Select
   server.sendHeader("type", "plain");
   server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "text/plain", ipToString(Ip) );
 }
-
-void handlePOSTMode() {
+// POST /////////////
+void handlePOSTTrackWhite() {
+  String text = server.arg("plain");
+  TrackWhite = text=="1";
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", String(TrackWhite));
+}
+void handlePOSTMotorMode() {
   String text = server.arg("plain");
   MotorMode = text.toInt();
   server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "text/plain", String(MotorMode));
 }
-void handlePOSTPower() {
+void handlePOSTRobotSpeed() {
   String text = server.arg("plain");
-  Power = text.toInt();
+  RobotSpeed = text.toDouble();
   server.sendHeader("Access-Control-Allow-Origin", "*");
-  server.send(200, "text/plain", String(Power));
+  server.send(200, "text/plain", String(RobotSpeed));
+}
+void handlePOSTMode1Forward() {
+  String text = server.arg("plain");
+  Mode1Forward = text.toDouble();
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", String(Mode1Forward));
+}
+void handlePOSTMode2Rotate() {
+  String text = server.arg("plain");
+  Mode2Rotate = text.toDouble();
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", String(Mode2Rotate));
 }
 void handlePOSTLedMode() {
   String text = server.arg("plain");
-  LedMode = text.toInt();
+  Mode1Forward = text.toInt();
   server.sendHeader("Access-Control-Allow-Origin", "*");
-  server.send(200, "text/plain", String(LedMode));
+  server.send(200, "text/plain", String(Mode1Forward));
 }
-void handlePOSTTrackwhite() {
+void handlePOSTLedR() {
   String text = server.arg("plain");
-  TrackWhite = text.toInt();
+  LedR = text.toInt();
   server.sendHeader("Access-Control-Allow-Origin", "*");
-  server.send(200, "text/plain", String(TrackWhite));
+  server.send(200, "text/plain", String(LedR));
 }
-/*
-  ip:string;
-  red:number;
-  green:number;
-  blue:number;
-  mode:number;
-  power:boolean;
-  ledMode:number;
-  trackwhite:number;
-*/
-
-
+void handlePOSTLedG() {
+  String text = server.arg("plain");
+  LedG = text.toInt();
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", String(LedG));
+}
+void handlePOSTLedB() {
+  String text = server.arg("plain");
+  LedB = text.toInt();
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", String(LedB));
+}
+// Connect /////////////
 bool ConnectWifi() {
   Serial.print("Connecting to Wifi ");
   WiFi.mode(WIFI_AP_STA);
@@ -121,6 +167,7 @@ bool StartACPWifi() {
     Serial.println(Ip);
     SetColor(0, 0, 255);
     delay(1000);
+    WifiIsHost = true;
     return true;
   }
   else {
@@ -146,25 +193,28 @@ void WlanSetup() {
   server.on("/",      HTTP_GET, handleGETRoot);
   server.on("/robot",   HTTP_GET, handleGETRobot);
   /* server.on("/green", HTTP_GET,handleGETGreen);
-    server.on("/blue",  HTTP_GET,handleGETBlue);
-    server.on("/mode",  HTTP_GET,handleGETMode);
-    server.on("/name",  HTTP_GET,handleGETName);
+
     server.on("/speed",  HTTP_GET,handleGETSpeed);
     //POST*/
-  server.on("/mode",   HTTP_POST, handlePOSTMode);
-  server.on("/power", HTTP_POST, handlePOSTPower);
-  server.on("/ledmode",  HTTP_POST, handlePOSTLedMode);
-  server.on("/trackwhite",  HTTP_POST, handlePOSTTrackwhite);
+  server.on("/TrackWhite",   HTTP_POST,handlePOSTTrackWhite );
+  server.on("/MotorMode",   HTTP_POST, handlePOSTMotorMode);
+  server.on("/RobotSpeed",   HTTP_POST,handlePOSTRobotSpeed );
+  server.on("/Mode1Forward",   HTTP_POST,handlePOSTMode1Forward );
+  server.on("/Mode2Rotate",   HTTP_POST, handlePOSTMode2Rotate);
+  server.on("/LedMode",   HTTP_POST,handlePOSTLedMode );
+  server.on("/LedR",   HTTP_POST, handlePOSTLedR);
+  server.on("/LedG",   HTTP_POST,handlePOSTLedG );
+  server.on("/LedB",   HTTP_POST, handlePOSTLedB);
+  
   //server.on("/name",  HTTP_POST,handlePOSTName);
   //server.on("/speed",  HTTP_POST,handlePOSTSpeed);
 
 
-  String completehost = "http://" + String(hostname) + ".local";
 
+  server.begin();
  #ifdef WIFIDEBUG
   Serial.println("Server Start");
-  server.begin();
-  Serial.println("URL: http://" + hostname + ".local/");
+
   #endif
 }
 

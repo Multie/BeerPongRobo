@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RobotService } from '../robot.service';
 
 @Component({
   selector: 'app-settings',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsPage implements OnInit {
 
-  constructor() { }
+  constructor(private robotService:RobotService) { }
 
   ngOnInit() {
   }

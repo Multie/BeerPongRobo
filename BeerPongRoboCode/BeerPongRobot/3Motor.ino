@@ -4,7 +4,7 @@
 #define WheelbaseRadius 33.2 //mm = messuard in Fusion
 double MotorStep = 0.1; //s Timesteps for the MotorPulses
 
-int MotorMode = 1;
+int MotorMode = 0;
 double RobotSpeed = 10; // mm/s
 double Mode1Forward = 20; // mm
 double Mode2Rotate = 0; // degree
@@ -29,7 +29,7 @@ long long endtime = 0;
       if ((forward && (SensorStateFR || SensorStateFL)) || (!forward && (SensorStateBR || SensorStateBL))) {
         // Sees Obstacle => Break
         MotorStop(true, true);
-        //ClearSensor();
+        ClearSensor();
         return false;
       }
       else {
@@ -128,24 +128,14 @@ void MotorLoop() {
     case 4: // Edge Follow
       if (!RobotMove(RobotSpeed, 1000)) {
         if (SensorStateFR) {
-          RobotRotate(RobotSpeed, -5);
+          RobotRotate(RobotSpeed, 5);
         }
         else if (SensorStateFL) {
-          RobotRotate(RobotSpeed, 5);
+          RobotRotate(RobotSpeed, -5);
         }
       }
       break;
-    case 5: // Edge Follow
-      if (!RobotMove(RobotSpeed, 1000)) {
-        if (SensorStateFR) {
-          RobotRotate(RobotSpeed, -5);
-        }
-        else if (SensorStateFL) {
-          RobotRotate(RobotSpeed, 5);
-        }
-      }
-      break;
-    case 6: // Random Circle
+    case 5: // Random Circle
       RobotMove(RobotSpeed, Mode6Forward);
       RobotRotate(RobotSpeed, Mode6Rotate);
       break;

@@ -41,15 +41,13 @@
 #define DEBUG
 //#define WIFIDEBUG
 #define SENSORDEBUG
+//#define MOTORDEBUG
+//#define LEDDEBUG
 
-int RobotNumber = 1;
-String hostname ="robot" + String(RobotNumber);
 
-
-boolean Power = false;
 bool debugprint = false;
 bool Unblock() {
-   LEDLoop();
+   //LEDLoop();
    WlanLoop();
    SensorLoop();
    if (debugprint) {
@@ -71,10 +69,10 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("");
-  Serial.println("BeerPong Robot " + String(RobotNumber));
   Serial.println(D0);
+  randomSeed(analogRead(MA0));
+
   //LEDSetup();
-    LEDSetup();
   WlanSetup();
   SensorSetup();
   MotorSetup();

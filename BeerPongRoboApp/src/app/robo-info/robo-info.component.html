@@ -10,70 +10,134 @@
 
     <ion-card-content>
 
+        <!-- TrackWhite: boolean; MotorMode: number; MotorStep: number; RobotSpeed: number; Mode1Forward: number; Mode2Rotate: number; LedMode: number; LedR: number; LedG: number; LedB: number; WifiIsHost: boolean;
+        -->
         <ion-item>
+            <!--Ip-->
             <ion-icon slot="start" name="wifi"></ion-icon>
             <ion-label>
                 Ip
             </ion-label>
             <ion-input type="text" [readonly]="readonlyIp" [(ngModel)]="robot.ip">
-
             </ion-input>
         </ion-item>
         <ion-item>
-            <ion-icon slot="start" name="flash"></ion-icon>
-            <ion-label>
-                Power
-            </ion-label>
-            <ion-toggle [(ngModel)]="robot.power">
-
-            </ion-toggle>
-        </ion-item>
-        <ion-item>
+            <!--MotorMode-->
             <ion-icon slot="start" name="ellipsis-horizontal"></ion-icon>
             <ion-label>
-                Mode
+                MotorMode
             </ion-label>
-            <ion-select [(ngModel)]="robot.mode" [compareWith]="compareFn">
+            <ion-select [(ngModel)]="robot.MotorMode" [compareWith]="compareFn">
                 <ion-select-option value="0">
                     No Move
                 </ion-select-option>
                 <ion-select-option value="1">
-                    Random
+                    Manuel Forward
                 </ion-select-option>
                 <ion-select-option value="2">
-                    Line Follow
+                    Manuel Rotate
                 </ion-select-option>
                 <ion-select-option value="3">
-                    Border Follow
+                    Random
+                </ion-select-option>
+                <ion-select-option value="4">
+                    Edge Follow
+                </ion-select-option>
+                <ion-select-option value="5">
+                    Random Circle
                 </ion-select-option>
             </ion-select>
         </ion-item>
         <ion-item>
+            <!--MotorStep-->
+            <ion-icon slot="start" name="analytics"></ion-icon>
+            <ion-label>
+                MotorStep
+            </ion-label>
+            <ion-input type="number" max="10" min="0.01" [(ngModel)]="robot.MotorStep">
+            </ion-input>
+        </ion-item>
+        <ion-item>
+            <!--RobotSpeed-->
+            <ion-icon slot="start" name="play-forward"></ion-icon>
+            <ion-label>
+                RobotSpeed
+            </ion-label>
+            <ion-input type="number" max="35.333" min="0.01" [(ngModel)]="robot.RobotSpeed">
+            </ion-input>
+        </ion-item>
+        <ion-item>
+            <!--Mode1Forward-->
+            <ion-icon slot="start" name="play-skip-forward-circle"></ion-icon>
+            <ion-label>
+                Mode1Forward
+            </ion-label>
+            <ion-input type="number" max="10000" min="0" [(ngModel)]="robot.Mode1Forward">
+            </ion-input>
+        </ion-item>
+        <ion-item>
+            <!--Mode2Rotate-->
+            <ion-icon slot="start" name="refresh-circle"></ion-icon>
+            <ion-label>
+                Mode2Rotate
+            </ion-label>
+            <ion-input type="number" max="360" min="-360" [(ngModel)]="robot.Mode2Rotate">
+            </ion-input>
+        </ion-item>
+
+        <ion-item>
+            <!--LedMode-->
             <ion-icon slot="start" name="flashlight"></ion-icon>
             <ion-label>
-                Led Mode
+                LedMode
             </ion-label>
-            <ion-select [(ngModel)]="robot.ledMode" [compareWith]="compareFn">
+            <ion-select [(ngModel)]="robot.LedMode" [compareWith]="compareFn">
                 <ion-select-option value="0">
                     Off
                 </ion-select-option>
                 <ion-select-option value="1">
-                    Random
+                    Set Color
                 </ion-select-option>
                 <ion-select-option value="2">
-                    Party
-                </ion-select-option>
-                <ion-select-option value="3">
-                    Fade
+                    Random Colors
                 </ion-select-option>
             </ion-select>
+
         </ion-item>
+        <ion-item>
+            <!--LedR-->
+            <ion-icon slot="start" name="image-outline"></ion-icon>
+            <ion-label>
+                LedR
+            </ion-label>
+            <ion-input type="number" max="255" min="0" [(ngModel)]="robot.LedR">
+            </ion-input>
+        </ion-item>
+        <ion-item>
+            <!--LedG-->
+            <ion-icon slot="start" name="image-outline"></ion-icon>
+            <ion-label>
+                LedG
+            </ion-label>
+            <ion-input type="number" max="255" min="0" [(ngModel)]="robot.LedG">
+            </ion-input>
+        </ion-item>
+        <ion-item>
+            <!--LedB-->
+            <ion-icon slot="start" name="image-outline"></ion-icon>
+            <ion-label>
+                LedB
+            </ion-label>
+            <ion-input type="number" max="255" min="0" [(ngModel)]="robot.LedB">
+            </ion-input>
+        </ion-item>
+
         <ion-item>
             <ion-icon slot="start" name="push-outline"></ion-icon>
             <ion-label>
                 Track
             </ion-label>
-            <ion-select [(ngModel)]="robot.trackwhite" [compareWith]="compareFn">
+            <ion-select [(ngModel)]="robot.TrackWhite" [compareWith]="compareFn">
                 <ion-select-option value="0">
                     White
                 </ion-select-option>
@@ -82,6 +146,16 @@
                 </ion-select-option>
             </ion-select>
         </ion-item>
+
+
+        <ion-item>
+            <ion-icon slot="start" name="server"></ion-icon>
+            <ion-label>
+                WifiIsHost
+            </ion-label>
+            <ion-toggle [(ngModel)]="robot.WifiIsHost" disabled></ion-toggle>
+        </ion-item>
+
         <ion-item button (click)="send()">
             <ion-icon slot="start" name="paper-plane"></ion-icon>
             <ion-label>

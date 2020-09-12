@@ -9,12 +9,13 @@ import { RobotService,MyRobot } from '../robot.service';
 export class RobotPage implements OnInit {
 
   constructor(private robotService:RobotService) { 
-    this.robots = this.robotService.robots;
+   
   }
 
   robots:Array<MyRobot>;
 
   ngOnInit() {
+    this.robots = this.robotService.robots;
    /* this.robotService.getGateway().then((gateway)=> {
       console.log("Gateway:" + gateway);
       this.robotService.scannRobots(gateway).then((list)=> {
